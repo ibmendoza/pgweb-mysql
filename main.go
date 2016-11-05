@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jessevdk/go-flags"
+
 	"os"
 	"os/exec"
 	"os/signal"
@@ -13,8 +14,8 @@ import (
 const VERSION = "0.1.1"
 
 var options struct {
-	Version  bool   `short:"v" long:"version" description:"Print version"`
-	Debug    bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"false"`
+	Version bool `short:"v" long:"version" description:"Print version"`
+	//Debug    bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"true"`
 	Url      string `long:"url" description:"Database connection string"`
 	Host     string `long:"host" description:"Server hostname or IP" default:"localhost"`
 	Port     int    `long:"port" description:"Server port" default:"3306"`
@@ -28,7 +29,7 @@ var dbClient *Client
 
 func exitWithMessage(message string) {
 	fmt.Println("Error:", message)
-	os.Exit(1)
+	//os.Exit(1)
 }
 
 func getConnectionString() string {
@@ -75,6 +76,7 @@ func initOptions() {
 	_, err := flags.ParseArgs(&options, os.Args)
 
 	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -130,11 +132,11 @@ func main() {
 	initClient()
 
 	defer dbClient.db.Close()
-
-	if !options.Debug {
-		gin.SetMode("release")
-	}
-
+	/*
+		if !options.Debug {
+			gin.SetMode("release")
+		}
+	*/
 	startServer()
 	openPage()
 	handleSignals()
